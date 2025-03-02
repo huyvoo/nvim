@@ -1,0 +1,5 @@
+require('core.keymaps')
+require('core.options')
+require('plugins')
+require('lsp.config')
+require('ui')
