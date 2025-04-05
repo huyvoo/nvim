@@ -26,7 +26,8 @@ dashboard.section.buttons.val = vim.list_extend(dashboard.section.buttons.val, {
 })
 
 -- Footer message with dynamic date
-local date = os.date("%A, %B %d, %Y") -- Get current date for footer
+local date = os.date("%A, %B %d, %Y - %I:%M %p")
+
 dashboard.section.footer.val = {
 	"",
 	"🚀 Today is " .. date,
@@ -37,4 +38,3 @@ alpha.setup(dashboard.config)
 
 -- Optional: Set up your Neovim startup screen to show the dashboard by default
 vim.cmd([[autocmd User AlphaReady echo 'Welcome to your Neovim setup!']])
-

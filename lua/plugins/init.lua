@@ -12,6 +12,15 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	-- lazy.nvim setup
+	{
+		"tanvirtin/monokai.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			vim.cmd("colorscheme monokai")
+		end,
+	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()
@@ -49,27 +58,6 @@ require("lazy").setup({
 	"williamboman/mason-lspconfig.nvim", -- Bridges Mason with nvim-lspconfig
 	"christoomey/vim-tmux-navigator",
 	"numToStr/Comment.nvim",
-	-- Catppuccin theme
-	{
-		"catppuccin/nvim",
-		name = "catppuccin",
-		priority = 1000,
-		config = function()
-			require("catppuccin").setup({
-				flavour = "mocha", -- Choose: latte, frappe, macchiato, mocha
-				integrations = {
-					treesitter = true,
-					telescope = true,
-					gitsigns = true,
-					cmp = true,
-					nvimtree = true,
-					lsp_saga = true,
-					which_key = true,
-				},
-			})
-			vim.cmd.colorscheme("catppuccin")
-		end,
-	},
 	{
 		"goolord/alpha-nvim",
 		event = "VimEnter",
@@ -283,3 +271,35 @@ vim.api.nvim_set_keymap(
 	':lua require("Comment.api").toggle.linewise(vim.fn.visualmode())<CR>',
 	{ noremap = true, silent = true }
 )
+require("luasnip.loaders.from_vscode").lazy_load()
+local ls = require("luasnip")
+
+vim.keymap.set({ "i" }, "<C-K>", function()
+	ls.expand()
+end, { silent = true })
+vim.keymap.set({ "i", "s" }, "<C-L>", function()
+	ls.jump(1)
+end, { silent = true })
+vim.keymap.set({ "i", "s" }, "<C-J>", function()
+	ls.jump(-1)
+end, { silent = true })
+
+vim.keymap.set({ "i", "s" }, "<C-E>", function()
+	if ls.choice_active() then
+		ls.change_choice(1)
+	end
+end, { silent = true })
+local ls = require("luasnip")
+local s = ls.snippet
+local t = ls.text_node
+local i = ls.insert_node
+
+ls.add_snippets("c", {
+	s("fopen", {
+		t("fopen("),
+		i(1, '"filename.txt"'),
+		t(", "),
+		i(2, '"r"'),
+		t(");"),
+	}),
+})
