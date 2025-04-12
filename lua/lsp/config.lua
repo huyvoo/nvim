@@ -119,3 +119,20 @@ mason_lspconfig.setup({
 -- Import and configure null-ls for formatting, diagnostics, etc.
 require("lsp.null-ls")
 require("lsp.cmp")
+
+-- Lua config
+vim.keymap.set({ "i", "s" }, "<C-j>", function()
+	return require("luasnip").jump(1)
+end, { expr = true })
+
+vim.keymap.set({ "i", "s" }, "<C-k>", function()
+	return require("luasnip").jump(-1)
+end, { expr = true })
+
+vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	return require("luasnip").jumpable(1) and require("luasnip").jump(1) or "<Tab>"
+end, { expr = true, silent = true })
+
+vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+	return require("luasnip").jumpable(-1) and require("luasnip").jump(-1) or "<S-Tab>"
+end, { expr = true, silent = true })

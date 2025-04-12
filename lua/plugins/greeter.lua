@@ -3,6 +3,17 @@ local dashboard = require("alpha.themes.dashboard")
 
 -- Set a cool ASCII banner
 dashboard.section.header.val = {
+	[[         .----------------.             ]],
+	[[        | .--------------. |            ]],
+	[[        | |   ______     | |            ]],
+	[[        | |  |_   _ \    | |            ]],
+	[[        | |    | |_) |   | |            ]],
+	[[        | |    |  __'.   | |            ]],
+	[[        | |   _| |__) |  | |            ]],
+	[[        | |  |_______.'  | |            ]],
+	[[        | |              | |            ]],
+	[[        | '--------------' |            ]],
+	[[         '----------------'             ]],
 	[[       Start menu    ]],
 }
 
@@ -13,11 +24,8 @@ dashboard.section.buttons.val = {
 	dashboard.button("n", "  New File", ":ene | startinsert<CR>"), -- Start a new file and go into insert mode
 	dashboard.button("u", "  Update Plugins", ":Lazy update<CR>"), -- Update installed plugins
 	dashboard.button("q", "  Quit Neovim", ":qa<CR>"), -- Quit Neovim
+	dashboard.button("o", "  Open Neorg Notes", ":Neorg workspace notes<CR>"),
 }
-
-dashboard.section.buttons.val = vim.list_extend(dashboard.section.buttons.val, {
-	dashboard.button("w", "  Open Vimwiki", ":VimwikiIndex<CR>"), -- Open the main vimwiki index
-})
 
 -- Additional quick access for popular actions
 dashboard.section.buttons.val = vim.list_extend(dashboard.section.buttons.val, {

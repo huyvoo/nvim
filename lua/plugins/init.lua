@@ -12,6 +12,26 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	{
+		"nvim-neorg/neorg",
+		build = ":Neorg sync-parsers",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {
+			load = {
+				["core.defaults"] = {}, -- Loads default behaviour
+				["core.concealer"] = {}, -- Adds pretty icons
+				["core.dirman"] = { -- Manages Neorg workspaces
+					config = {
+						workspaces = {
+							notes = "~/neorg",
+						},
+						default_workspace = "notes",
+					},
+				},
+			},
+		},
+		lazy = false, -- load on startup (optional)
+	},
 	-- lazy.nvim setup
 	{
 		"tanvirtin/monokai.nvim",
@@ -155,6 +175,19 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"akinsho/bufferline.nvim",
+		version = "*",
+		dependencies = "nvim-tree/nvim-web-devicons",
+		config = function()
+			require("bufferline").setup({
+				options = {
+					separator_style = "slant", -- or "padded_slant", "thick", "thin", "slope"
+					diagnostics = "nvim_lsp",
+				},
+			})
+		end,
+	},
+	{
 		"stevearc/conform.nvim",
 		opts = {
 			formatters_by_ft = {
@@ -218,23 +251,6 @@ require("lazy").setup({
 			vim.api.nvim_set_keymap("n", "<leader>j", ":AerialNext<CR>", { noremap = true, silent = true }) -- Next symbol
 			vim.api.nvim_set_keymap("n", "<leader>k", ":AerialPrev<CR>", { noremap = true, silent = true }) -- Previous symbol
 		end,
-	},
-	{
-		"romgrk/barbar.nvim",
-		dependencies = {
-			"lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
-			"nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
-		},
-		init = function()
-			vim.g.barbar_auto_setup = false
-		end,
-		opts = {
-			-- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-			-- animation = true,
-			-- insert_at_start = true,
-			-- …etc.
-		},
-		version = "^1.0.0", -- optional: only update when a new 1.x version is released
 	},
 	{
 		"nvim-telescope/telescope-ui-select.nvim",

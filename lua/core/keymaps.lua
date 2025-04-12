@@ -5,7 +5,6 @@ local opts = { noremap = true, silent = true }
 -- Remap ESC to jk
 map("i", "jj", "<ESC>", opts)
 
-vim.keymap.set("n", "ww", ":w<CR>", { noremap = true, silent = true })
 -- Save file with Ctrl+s
 map("n", "<C-s>", ":w<CR>", opts)
 
