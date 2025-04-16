@@ -3,18 +3,7 @@ local dashboard = require("alpha.themes.dashboard")
 
 -- Set a cool ASCII banner
 dashboard.section.header.val = {
-	[[         .----------------.             ]],
-	[[        | .--------------. |            ]],
-	[[        | |   ______     | |            ]],
-	[[        | |  |_   _ \    | |            ]],
-	[[        | |    | |_) |   | |            ]],
-	[[        | |    |  __'.   | |            ]],
-	[[        | |   _| |__) |  | |            ]],
-	[[        | |  |_______.'  | |            ]],
-	[[        | |              | |            ]],
-	[[        | '--------------' |            ]],
-	[[         '----------------'             ]],
-	[[       Start menu    ]],
+	[[       Hello World!    ]],
 }
 
 -- Define buttons for quick actions with added descriptions

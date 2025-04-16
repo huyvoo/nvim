@@ -78,38 +78,39 @@ require("lazy").setup({
 	"williamboman/mason-lspconfig.nvim", -- Bridges Mason with nvim-lspconfig
 	"christoomey/vim-tmux-navigator",
 	"numToStr/Comment.nvim",
+	"tpope/vim-fugitive",
 	{
 		"goolord/alpha-nvim",
 		event = "VimEnter",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
-	{
-		"folke/noice.nvim",
-		event = "VeryLazy",
-		opts = {
-			views = {
-				cmdline_popup = {
-					position = {
-						row = math.floor(vim.o.lines / 2), -- Centers vertically
-						col = math.floor(vim.o.columns / 2 - 25), -- Centers horizontally
-					},
-					size = {
-						width = 50, -- Adjust width as needed
-						height = "auto",
-					},
-				},
-			},
-			presets = {
-				command_palette = true, -- Example preset, you can customize as needed
-			},
-			routes = {
-				{
-					filter = { event = "notify" },
-					opts = { skip = true }, -- This disables notifications
-				},
-			},
-		},
-	},
+	-- {
+	-- 	"folke/noice.nvim",
+	-- 	event = "VeryLazy",
+	-- 	opts = {
+	-- 		views = {
+	-- 			cmdline_popup = {
+	-- 				position = {
+	-- 					row = math.floor(vim.o.lines / 2), -- Centers vertically
+	-- 					col = math.floor(vim.o.columns / 2 - 25), -- Centers horizontally
+	-- 				},
+	-- 				size = {
+	-- 					width = 50, -- Adjust width as needed
+	-- 					height = "auto",
+	-- 				},
+	-- 			},
+	-- 		},
+	-- 		presets = {
+	-- 			command_palette = true, -- Example preset, you can customize as needed
+	-- 		},
+	-- 		routes = {
+	-- 			{
+	-- 				filter = { event = "notify" },
+	-- 				opts = { skip = true }, -- This disables notifications
+	-- 			},
+	-- 		},
+	-- 	},
+	-- },
 	{
 		"akinsho/toggleterm.nvim",
 		config = function()
