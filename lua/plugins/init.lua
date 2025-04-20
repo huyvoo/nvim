@@ -175,19 +175,19 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{
-		"akinsho/bufferline.nvim",
-		version = "*",
-		dependencies = "nvim-tree/nvim-web-devicons",
-		config = function()
-			require("bufferline").setup({
-				options = {
-					separator_style = "slant", -- or "padded_slant", "thick", "thin", "slope"
-					diagnostics = "nvim_lsp",
-				},
-			})
-		end,
-	},
+	-- {
+	-- 	"akinsho/bufferline.nvim",
+	-- 	version = "*",
+	-- 	dependencies = "nvim-tree/nvim-web-devicons",
+	-- 	config = function()
+	-- 		require("bufferline").setup({
+	-- 			options = {
+	-- 				separator_style = "slant", -- or "padded_slant", "thick", "thin", "slope"
+	-- 				diagnostics = "nvim_lsp",
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
 	{
 		"stevearc/conform.nvim",
 		opts = {
@@ -219,40 +219,25 @@ require("lazy").setup({
 			},
 		},
 	},
-	{
-		"stevearc/aerial.nvim",
-		config = function()
-			require("aerial").setup({
-				layout = {
-					default_direction = "right", -- Always open on the right side
-					placement = "edge",
-				},
-				attach_mode = "global", -- Use Aerial globally for all buffers
-				open_automatic = true, -- Auto-open when entering a file
-				close_automatic_events = { "unfocus" }, -- Auto-close when losing focus
-				keymaps = {
-					["?"] = "actions.show_help", -- Show help
-					["<CR>"] = "actions.jump", -- Jump to symbol
-					["o"] = "actions.jump", -- Open (same as Enter)
-					["<Tab>"] = "actions.down_and_jump", -- Jump to child symbol
-					["<S-Tab>"] = "actions.up_and_jump", -- Jump to parent symbol
-					["<Esc>"] = "actions.close", -- Close Aerial
-					["q"] = "actions.close", -- Quit
-					["l"] = "actions.next", -- Move to next symbol
-					["h"] = "actions.prev", -- Move to previous symbol
-					["{"] = "actions.prev_up", -- Move to previous parent symbol
-					["}"] = "actions.next_up", -- Move to next parent symbol
-					["[["] = "actions.prev", -- Jump to previous
-					["]]"] = "actions.next", -- Jump to next
-				},
-			})
-
-			-- Global shortcuts for toggling Aerial
-			vim.api.nvim_set_keymap("n", "<leader>jk", ":AerialToggle! right<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<leader>j", ":AerialNext<CR>", { noremap = true, silent = true }) -- Next symbol
-			vim.api.nvim_set_keymap("n", "<leader>k", ":AerialPrev<CR>", { noremap = true, silent = true }) -- Previous symbol
-		end,
-	},
+	-- {
+	-- 	"stevearc/aerial.nvim",
+	-- 	config = function()
+	-- 		require("aerial").setup({
+	-- 			layout = {
+	-- 				default_direction = "right", -- Always open on the right side
+	-- 				placement = "edge",
+	-- 			},
+	-- 			attach_mode = "global", -- Use Aerial globally for all buffers
+	-- 			open_automatic = true, -- Auto-open when entering a file
+	-- 			close_automatic_events = { "unfocus" }, -- Auto-close when losing focus
+	-- 		})
+	--
+	-- 		-- Global shortcuts for toggling Aerial
+	-- 		vim.api.nvim_set_keymap("n", "<leader>jk", ":AerialToggle! right<CR>", { noremap = true, silent = true })
+	-- 		vim.api.nvim_set_keymap("n", "<leader>j", ":AerialNext<CR>", { noremap = true, silent = true }) -- Next symbol
+	-- 		vim.api.nvim_set_keymap("n", "<leader>k", ":AerialPrev<CR>", { noremap = true, silent = true }) -- Previous symbol
+	-- 	end,
+	-- },
 	{
 		"nvim-telescope/telescope-ui-select.nvim",
 		config = function()
@@ -261,7 +246,6 @@ require("lazy").setup({
 	},
 })
 
-require("plugins/treesitter")
 require("plugins/telescope")
 require("plugins/tmux_navigator")
 require("plugins/greeter")

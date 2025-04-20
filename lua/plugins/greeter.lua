@@ -32,6 +32,3 @@ dashboard.section.footer.val = {
 
 -- Apply the theme configuration to Neovim
 alpha.setup(dashboard.config)
-
--- Optional: Set up your Neovim startup screen to show the dashboard by default
-vim.cmd([[autocmd User AlphaReady echo 'Welcome to your Neovim setup!']])
