@@ -110,11 +110,11 @@ local mason = require("mason")
 local mason_lspconfig = require("mason-lspconfig")
 local lspconfig = require("lspconfig")
 
-mason.setup()
-mason_lspconfig.setup({
-	ensure_installed = { "jdtls", "pyright", "lua_ls", "clangd", "gopls", "rust_analyzer", "ts_ls" }, -- Added clangd
-	automatic_installation = true,
-})
+-- mason.setup()
+-- mason_lspconfig.setup({
+-- 	ensure_installed = { "jdtls", "pyright", "lua_ls", "clangd", "gopls", "rust_analyzer", "ts_ls" }, -- Added clangd
+-- 	automatic_installation = true,
+-- })
 
 nvim_lsp.ts_ls.setup({
 	name = "ts_ls", -- override the name (optional, for display purposes)
