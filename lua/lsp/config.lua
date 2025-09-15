@@ -32,7 +32,7 @@ nvim_lsp.rust_analyzer.setup({
 		},
 	},
 
-	capabilities = require("cmp_nvim_lsp").default_capabilities(),
+	capabilities = capabilities,
 })
 
 nvim_lsp.gopls.setup({
@@ -48,7 +48,7 @@ nvim_lsp.gopls.setup({
 		},
 	},
 	root_dir = require("lspconfig.util").root_pattern("go.mod", ".git"),
-	capabilities = require("cmp_nvim_lsp").default_capabilities(),
+	capabilities = capabilities,
 })
 
 nvim_lsp.pyright.setup({
@@ -61,6 +61,7 @@ nvim_lsp.pyright.setup({
 			},
 		},
 	},
+	capabilities = capabilities,
 })
 
 -- C/C++
@@ -74,7 +75,7 @@ nvim_lsp.clangd.setup({
 			new_config.filetypes = { "cpp" }
 		end
 	end,
-	capabilities = require("cmp_nvim_lsp").default_capabilities(),
+	capabilities = capabilities,
 })
 
 -- Keybindings for LSP
@@ -109,21 +110,6 @@ vim.api.nvim_set_keymap("n", "<Leader>h", ":split<CR>", { noremap = true, silent
 local mason = require("mason")
 local mason_lspconfig = require("mason-lspconfig")
 local lspconfig = require("lspconfig")
-
--- mason.setup()
--- mason_lspconfig.setup({
--- 	ensure_installed = { "jdtls", "pyright", "lua_ls", "clangd", "gopls", "rust_analyzer", "ts_ls" }, -- Added clangd
--- 	automatic_installation = true,
--- })
-
-nvim_lsp.ts_ls.setup({
-	name = "ts_ls", -- override the name (optional, for display purposes)
-	cmd = { "typescript-language-server", "--stdio" },
-	filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-	root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
-	single_file_support = true,
-	capabilities = capabilities,
-})
 
 -- Import and configure null-ls for formatting, diagnostics, etc.
 require("lsp.null-ls")

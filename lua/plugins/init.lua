@@ -68,7 +68,8 @@ require("lazy").setup({
 	"saadparwaiz1/cmp_luasnip",
 	"neovim/nvim-lspconfig",
 	"tpope/vim-commentary",
-	"jose-elias-alvarez/null-ls.nvim",
+	"nvimtools/none-ls.nvim",
+	-- "jose-elias-alvarez/null-ls.nvim",
 	"windwp/nvim-autopairs",
 	"navarasu/onedark.nvim",
 	"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
