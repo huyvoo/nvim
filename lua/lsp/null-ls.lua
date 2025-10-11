@@ -8,6 +8,6 @@ null_ls.setup({
 })
 
 require("nvim-autopairs").setup({
-	disable_filetype = { "TelescopePrompt", "vim" }, -- Disable in specific filetypes
+	disable_filetype = { "fzf", "vim" }, -- Disable in specific filetypes
 	fast_wrap = {}, -- Enable fast wrapping feature
 })

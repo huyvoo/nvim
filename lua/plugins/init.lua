@@ -13,6 +13,20 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	{
+		"ibhagwan/fzf-lua",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {
+			winopts = {
+				width = 1.0, -- full width
+				height = 1.0, -- full height
+				preview = {
+					layout = "vertical", -- vertical split (top/bottom)
+					vertical = "up:75%", -- preview at top, takes 75% height
+				},
+			},
+		},
+	},
+	{
 		"nvim-neorg/neorg",
 		build = ":Neorg sync-parsers",
 		dependencies = { "nvim-lua/plenary.nvim" },
@@ -59,7 +73,6 @@ require("lazy").setup({
 	"kristijanhusak/vim-dadbod-completion", -- Autocompletion for SQL
 	"nvim-lua/plenary.nvim",
 	"nvim-tree/nvim-tree.lua",
-	"nvim-telescope/telescope.nvim",
 	"nvim-treesitter/nvim-treesitter",
 	"hrsh7th/nvim-cmp",
 	"hrsh7th/cmp-nvim-lsp",
@@ -239,15 +252,9 @@ require("lazy").setup({
 	-- 		vim.api.nvim_set_keymap("n", "<leader>k", ":AerialPrev<CR>", { noremap = true, silent = true }) -- Previous symbol
 	-- 	end,
 	-- },
-	{
-		"nvim-telescope/telescope-ui-select.nvim",
-		config = function()
-			require("telescope").load_extension("ui-select")
-		end,
-	},
 })
 
-require("plugins/telescope")
+require("plugins/telescope") -- Now contains fzf-lua configuration
 require("plugins/tmux_navigator")
 require("plugins/greeter")
 
@@ -305,3 +312,186 @@ ls.add_snippets("c", {
 		t(");"),
 	}),
 })
+
+-- Java snippets
+ls.add_snippets("java", {
+	s("foreach", {
+		t("for ("),
+		i(1, "String"),
+		t(" "),
+		i(2, "string"),
+		t(" : "),
+		i(3, "args"),
+		t({") {", "\t"}),
+		i(0),
+		t({"", "}"}),
+	}),
+})
+
+-- Simple Java decompile helper using `jadx`
+-- Usage: :JadxDecompile [optional_path_to_jar_or_class]
+vim.api.nvim_create_user_command("JadxDecompile", function(opts)
+	local function is_executable(bin)
+		return vim.fn.executable(bin) == 1
+	end
+
+	if not is_executable("jadx") then
+		vim.notify("jadx not found. Install with: brew install jadx", vim.log.levels.ERROR)
+		return
+	end
+
+	local target = opts.args ~= "" and opts.args or vim.fn.expand("%:p")
+	if target == nil or target == "" then
+		vim.notify("No target file provided or current buffer has no file.", vim.log.levels.ERROR)
+		return
+	end
+
+	local outdir = vim.fn.tempname()
+	vim.fn.mkdir(outdir)
+
+	local cmd = { "jadx", "-d", outdir, target }
+	vim.notify("Decompiling with jadx...", vim.log.levels.INFO)
+
+	vim.fn.jobstart(cmd, {
+		on_exit = function(_, code)
+			if code ~= 0 then
+				vim.schedule(function()
+					vim.notify("jadx failed (exit code " .. code .. ")", vim.log.levels.ERROR)
+				end)
+				return
+			end
+
+			-- Find first .java file in output and open it
+			local java_files = vim.fn.systemlist("fd -t f -e java . " .. vim.fn.shellescape(outdir))
+			if #java_files == 0 then
+				java_files = vim.fn.systemlist("find " .. vim.fn.shellescape(outdir) .. " -type f -name '*.java'")
+			end
+
+			vim.schedule(function()
+				if #java_files > 0 then
+					vim.cmd("edit " .. java_files[1])
+					vim.notify("Opened decompiled file: " .. java_files[1], vim.log.levels.INFO)
+				else
+					vim.notify("No .java files found in decompiled output.", vim.log.levels.WARN)
+				end
+			end)
+		end,
+	})
+end, { nargs = "?", complete = "file" })
+
+-- Better Java decompiler: prefer CFR (rich output, handles libraries well), fallback to jadx
+-- Install: brew install cfr jadx fd
+-- Usage: :JavaDecompile [path]  (defaults to current file)
+vim.api.nvim_create_user_command("JavaDecompile", function(opts)
+	local function is_exec(bin)
+		return vim.fn.executable(bin) == 1
+	end
+
+	local target = opts.args ~= "" and opts.args or vim.fn.expand("%:p")
+	if target == nil or target == "" then
+		vim.notify("No target file provided or current buffer has no file.", vim.log.levels.ERROR)
+		return
+	end
+
+	-- If target is a .jar, CFR can output to directory; if .class, it outputs to current dir
+	local outdir = vim.fn.tempname()
+	vim.fn.mkdir(outdir)
+
+	local use_cfr = is_exec("cfr")
+	if use_cfr then
+		local args = { "cfr", target, "--outputdir", outdir, "--silent" }
+		vim.notify("Decompiling with CFR...", vim.log.levels.INFO)
+		vim.fn.jobstart(args, {
+			on_exit = function(_, code)
+				if code ~= 0 then
+					vim.schedule(function()
+						vim.notify("CFR failed (exit code " .. code .. ")", vim.log.levels.WARN)
+					end)
+					return
+				end
+				local java_files = vim.fn.systemlist("fd -t f -e java . " .. vim.fn.shellescape(outdir))
+				if #java_files == 0 then
+					java_files = vim.fn.systemlist("find " .. vim.fn.shellescape(outdir) .. " -type f -name '*.java'")
+				end
+				vim.schedule(function()
+					if #java_files > 0 then
+						vim.cmd("edit " .. java_files[1])
+						vim.notify("Opened decompiled (CFR): " .. java_files[1], vim.log.levels.INFO)
+					else
+						vim.notify("No .java files found from CFR output.", vim.log.levels.WARN)
+					end
+				end)
+			end,
+		})
+		return
+	end
+
+	-- Fallback to jadx if CFR is not available
+	if not is_exec("jadx") then
+		vim.notify("No decompiler found. Install with: brew install cfr jadx", vim.log.levels.ERROR)
+		return
+	end
+
+	local cmd = { "jadx", "-d", outdir, target }
+	vim.notify("Decompiling with jadx...", vim.log.levels.INFO)
+	vim.fn.jobstart(cmd, {
+		on_exit = function(_, code)
+			if code ~= 0 then
+				vim.schedule(function()
+					vim.notify("jadx failed (exit code " .. code .. ")", vim.log.levels.ERROR)
+				end)
+				return
+			end
+			local java_files = vim.fn.systemlist("fd -t f -e java . " .. vim.fn.shellescape(outdir))
+			if #java_files == 0 then
+				java_files = vim.fn.systemlist("find " .. vim.fn.shellescape(outdir) .. " -type f -name '*.java'")
+			end
+			vim.schedule(function()
+				if #java_files > 0 then
+					vim.cmd("edit " .. java_files[1])
+					vim.notify("Opened decompiled (jadx): " .. java_files[1], vim.log.levels.INFO)
+				else
+					vim.notify("No .java files found from jadx output.", vim.log.levels.WARN)
+				end
+			end)
+		end,
+	})
+end, { nargs = "?", complete = "file" })
+
+-- Open JDK source for a given class using $JAVA_HOME/lib/src.zip
+-- Usage: :JdkSource java.util.Random  (or leave empty to use word under cursor)
+vim.api.nvim_create_user_command("JdkSource", function(opts)
+	local class_name = opts.args ~= "" and opts.args or vim.fn.expand("<cword>")
+	local java_home = os.getenv("JAVA_HOME")
+	if not java_home or java_home == "" then
+		vim.notify("JAVA_HOME not set. Set JAVA_HOME to your JDK.", vim.log.levels.ERROR)
+		return
+	end
+	local src_zip = java_home .. "/lib/src.zip"
+	if vim.fn.filereadable(src_zip) ~= 1 then
+		vim.notify("JDK src.zip not found at " .. src_zip, vim.log.levels.ERROR)
+		return
+	end
+
+	local tmpdir = vim.fn.tempname()
+	vim.fn.mkdir(tmpdir)
+
+	-- Convert class name to path, e.g., java.util.Random -> java/util/Random.java
+	local path = class_name:gsub("%.", "/") .. ".java"
+	local unzip_cmd = { "unzip", "-p", src_zip, path }
+	if vim.fn.executable("unzip") ~= 1 then
+		vim.notify("unzip not found. Install it (macOS has it by default).", vim.log.levels.ERROR)
+		return
+	end
+
+	local content = vim.fn.systemlist(table.concat(unzip_cmd, " "))
+	if vim.v.shell_error ~= 0 or #content == 0 then
+		vim.notify("Could not extract " .. path .. " from src.zip", vim.log.levels.WARN)
+		return
+	end
+
+	local file_path = tmpdir .. "/" .. class_name:gsub("%.", "_") .. ".java"
+	vim.fn.writefile(content, file_path)
+	vim.cmd("edit " .. file_path)
+	vim.notify("Opened JDK source: " .. class_name, vim.log.levels.INFO)
+end, { nargs = "?" })
