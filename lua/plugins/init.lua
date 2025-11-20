@@ -72,7 +72,22 @@ require("lazy").setup({
 	"kristijanhusak/vim-dadbod-ui", -- UI for vim-dadbod
 	"kristijanhusak/vim-dadbod-completion", -- Autocompletion for SQL
 	"nvim-lua/plenary.nvim",
-	"nvim-tree/nvim-tree.lua",
+	{
+		"nvim-tree/nvim-tree.lua",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		keys = {
+			{
+				"<leader>e",
+				function()
+					require("nvim-tree.api").tree.toggle({ focus = false })
+				end,
+				desc = "Toggle file tree",
+			},
+		},
+		config = function()
+			require("nvim-tree").setup()
+		end,
+	},
 	"nvim-treesitter/nvim-treesitter",
 	"hrsh7th/nvim-cmp",
 	"hrsh7th/cmp-nvim-lsp",

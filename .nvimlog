@@ -1,0 +1,2 @@
+WRN 2025-11-15T09:45:06.928 ?.17356    server_start:193: Failed to start server: operation not permitted: /var/folders/gg/mh2w4msj77l1cyw064r82g9m0000gn/T/nvim.huyvo/mVxpi0/nvim.17356.0
+WRN 2025-11-15T09:45:07.016 ?.17356    server_start:193: Failed to start server: operation not permitted: /var/folders/gg/mh2w4msj77l1cyw064r82g9m0000gn/T/nvim.huyvo/mVxpi0/fzf-lua.1763228707.17356.1
