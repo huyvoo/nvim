@@ -11,6 +11,3 @@ require("fzf-lua").setup({
 })
 
 -- fzf-lua keymaps are now defined in core/keymaps.lua
-
--- LSP keymaps
-vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })

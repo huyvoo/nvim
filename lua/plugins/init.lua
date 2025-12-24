@@ -95,6 +95,73 @@ require("lazy").setup({
 	"L3MON4D3/LuaSnip",
 	"saadparwaiz1/cmp_luasnip",
 	"neovim/nvim-lspconfig",
+	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+	{
+		"aznhe21/actions-preview.nvim",
+		keys = {
+			{
+				"<leader>ca",
+				function()
+					require("actions-preview").code_actions()
+				end,
+				mode = { "n", "v" },
+				desc = "Code Action (preview)",
+			},
+		},
+		config = function()
+			local actions_preview = require("actions-preview")
+			local has_telescope, themes = pcall(require, "telescope.themes")
+			local telescope_opts = {}
+
+			if has_telescope then
+				local entry_display = require("telescope.pickers.entry_display")
+				local strings = require("plenary.strings")
+				telescope_opts = themes.get_dropdown({
+					layout_strategy = "vertical",
+					layout_config = {
+						width = 0.85,
+						height = 0.9,
+						prompt_position = "top",
+					},
+					sorting_strategy = "ascending",
+					make_make_display = function(values)
+						local index_width, title_width, client_width = 0, 0, 0
+
+						for _, value in ipairs(values) do
+							index_width = math.max(index_width, strings.strdisplaywidth(value.index))
+							title_width = math.max(title_width, strings.strdisplaywidth(value.title))
+							client_width = math.max(client_width, strings.strdisplaywidth(value.client_name or ""))
+						end
+
+						local displayer = entry_display.create({
+							separator = " ",
+							items = {
+								{ width = index_width + 2 }, -- include "."
+								{ width = title_width },
+								{ width = client_width },
+							},
+						})
+
+						return function(entry)
+							return displayer({
+								{ string.format("%d.", entry.value.index), "TelescopePromptPrefix" },
+								{ entry.value.title },
+								{ entry.value.client_name or "", "TelescopeResultsComment" },
+							})
+						end
+					end,
+				})
+			end
+
+			actions_preview.setup({
+				backend = { "telescope", "nui" },
+				telescope = telescope_opts,
+			})
+		end,
+	},
 	"tpope/vim-commentary",
 	"nvimtools/none-ls.nvim",
 	-- "jose-elias-alvarez/null-ls.nvim",
@@ -103,8 +170,21 @@ require("lazy").setup({
 	"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 	"kyazdani42/nvim-web-devicons",
 	"lewis6991/gitsigns.nvim", -- Git integration
-	"williamboman/mason.nvim", -- Mason package manager
-	"williamboman/mason-lspconfig.nvim", -- Bridges Mason with nvim-lspconfig
+	{
+		"williamboman/mason.nvim", -- Mason package manager
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		"williamboman/mason-lspconfig.nvim", -- Bridges Mason with nvim-lspconfig
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require("mason-lspconfig").setup({
+				ensure_installed = { "gopls" }, -- Auto-install Go language server
+			})
+		end,
+	},
 	"christoomey/vim-tmux-navigator",
 	"numToStr/Comment.nvim",
 	"tpope/vim-fugitive",

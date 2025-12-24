@@ -30,16 +30,3 @@ map("n", "<Leader>w", ":lua require('fzf-lua').grep_cword()<CR>", opts)
 map("n", "<Leader>W", ":lua require('fzf-lua').grep_cWORD()<CR>", opts)
 
 -- vim.api.nvim_set_keymap("n", "<Leader>e", ":NvimTreeToggle<CR>", opts)
-vim.api.nvim_create_autocmd({ "InsertEnter" }, {
-	pattern = "*",
-	callback = function()
-		vim.opt.relativenumber = false
-	end,
-})
-
-vim.api.nvim_create_autocmd({ "InsertLeave" }, {
-	pattern = "*",
-	callback = function()
-		vim.opt.relativenumber = true
-	end,
-})
