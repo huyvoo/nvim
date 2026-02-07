@@ -162,6 +162,78 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{
+		"mfussenegger/nvim-dap",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"nvim-neotest/nvim-nio",
+		},
+		config = function()
+			local dap = require("dap")
+			local dapui = require("dapui")
+
+			if vim.fn.executable("dlv") == 0 then
+				vim.notify("dlv not found in PATH; Go debugging will not work", vim.log.levels.WARN)
+			end
+
+			dap.adapters.go = {
+				type = "server",
+				host = "127.0.0.1",
+				port = "${port}",
+				executable = {
+					command = "dlv",
+					args = { "dap", "-l", "127.0.0.1:${port}" },
+				},
+			}
+
+			dap.configurations.go = {
+				{
+					type = "go",
+					name = "Debug file",
+					request = "launch",
+					program = "${file}",
+				},
+				{
+					type = "go",
+					name = "Debug package (cwd)",
+					request = "launch",
+					program = "${workspaceFolder}",
+				},
+				{
+					type = "go",
+					name = "Debug test (file)",
+					request = "launch",
+					mode = "test",
+					program = "${file}",
+				},
+			}
+
+			dapui.setup()
+
+			dap.listeners.after.event_initialized["dapui_config"] = function()
+				dapui.open()
+			end
+			dap.listeners.before.event_terminated["dapui_config"] = function()
+				dapui.close()
+			end
+			dap.listeners.before.event_exited["dapui_config"] = function()
+				dapui.close()
+			end
+
+			-- DAP keymaps: edit bindings here.
+			local map = vim.keymap.set
+			map("n", "<F5>", dap.continue, { desc = "DAP continue" })
+			map("n", "<F10>", dap.step_over, { desc = "DAP step over" })
+			map("n", "<F11>", dap.step_into, { desc = "DAP step into" })
+			map("n", "<F12>", dap.step_out, { desc = "DAP step out" })
+			map("n", "<F9>", dap.toggle_breakpoint, { desc = "DAP breakpoint" })
+			map("n", "<F8>", function()
+				dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+			end, { desc = "DAP conditional breakpoint" })
+			map("n", "<F7>", dap.repl.open, { desc = "DAP REPL" })
+			map("n", "<F6>", dapui.toggle, { desc = "DAP UI" })
+		end,
+	},
 	"tpope/vim-commentary",
 	"nvimtools/none-ls.nvim",
 	-- "jose-elias-alvarez/null-ls.nvim",

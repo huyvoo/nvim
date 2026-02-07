@@ -36,6 +36,18 @@ vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
+
+local function set_cursor_highlight()
+	-- Ensure the cursor stays yellow even after colorscheme changes.
+	vim.api.nvim_set_hl(0, "Cursor", { fg = "#000000", bg = "#FFFF00" })
+	vim.api.nvim_set_hl(0, "CursorIM", { fg = "#000000", bg = "#FFFF00" })
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = set_cursor_highlight,
+})
+
+set_cursor_highlight()
 -- Set colorscheme
 -- local ls = require("luasnip")
 --
